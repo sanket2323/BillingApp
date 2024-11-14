@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -69,7 +70,9 @@ fun AdminLogin(navController: NavController) {
         ) {
             OutlinedTextField(value = adminId, onValueChange = {
                 adminId = it
-            }, enabled = true, placeholder = {
+            },
+                shape = RoundedCornerShape(10.dp),
+                enabled = true, placeholder = {
                 Text(text = "Enter Id")
             }, label = {
                 Text(text = "Enter Id")
@@ -86,6 +89,7 @@ fun AdminLogin(navController: NavController) {
             Spacer(modifier = Modifier.height(16.dp))
             OutlinedTextField(
                 value = adminPass,
+                shape = RoundedCornerShape(10.dp),
                 onValueChange = {
                     adminPass = it
                 },

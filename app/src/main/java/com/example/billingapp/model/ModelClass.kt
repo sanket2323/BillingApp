@@ -2,7 +2,7 @@ package com.example.billingapp.model
 
 data class BillingModelClass(
     var billingDetails: ArrayList<BillingDetails>,
-    var cardData: List<List<List<CardData>>> = listOf(),
+    var cardData: List<CardData> = listOf(),
     var expenseModelClass: List<ExpenseModelClass>,
 )
 
