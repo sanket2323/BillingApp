@@ -65,7 +65,7 @@ fun HomePage(navController: NavController) {
             Button(
                 onClick = {
 
-                    navController.navigate("adminLogin")
+                    navController.navigate("displayList")
                 }, modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
