@@ -410,7 +410,7 @@ fun MakeBillScreen(navController: NavController) {
                         var exp8 = bardhana.toIntOrNull() ?: 0
                         var exp9 = otherExpense.toIntOrNull() ?: 0
 
-                        var totalExp by remember {
+                        var totalExpense by remember {
                             mutableStateOf("")
                         }
 
@@ -519,10 +519,10 @@ fun MakeBillScreen(navController: NavController) {
 
                         }
 
-                        totalExp =
+                        totalExpense =
                             (exp1 + exp2 + exp3 + exp4 + exp5 + exp6 + exp7 + exp8 + exp9).toString()
                         Text(
-                            text = "Total Expense: ${totalExp}₹",
+                            text = "Total Expense: ${totalExpense}₹",
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 20.sp,
                             modifier = Modifier.fillMaxWidth(),
@@ -531,7 +531,7 @@ fun MakeBillScreen(navController: NavController) {
                         HorizontalDivider(
                             thickness = 0.75.dp, color = Color.Gray
                         )
-                        totalPayAbleAmount = (totalofAllCards - totalExp.toInt()).toString()
+                        totalPayAbleAmount = (totalofAllCards - totalExpense.toInt()).toString()
                         Text(
                             text = "Total Payable Amount: ${totalPayAbleAmount}₹",
                             fontWeight = FontWeight.SemiBold,
@@ -550,77 +550,63 @@ fun MakeBillScreen(navController: NavController) {
                                 delay(2000)
 
                                 val hashMapItems = HashMap<String, String>()
-                                val hashMapBillDetails = HashMap<String, String>()
-                                val hashMapExpense = HashMap<String, String>()
+                                val hashMapCardItems = HashMap<String, String>()
                                 val newDocumentRef = db.collection("users").document().id
-                                var framerDocId = "user_collection_${nameOfFramer.text}_${newDocumentRef}"
+                                var framerDocId = "${nameOfFramer.text}_${newDocumentRef}"
 
 
-                                hashMapBillDetails["nameOfFramer"] = nameOfFramer.text
-                                hashMapBillDetails["cityName"] = cityName.text
-                                hashMapBillDetails["date"] = date
-                                hashMapBillDetails["billNo"] = billNo.text
-                                hashMapBillDetails["totalPayableAmount"] = totalPayAbleAmount
-                                hashMapBillDetails["id"] = newDocumentRef
+                                hashMapItems["nameOfFramer"] = nameOfFramer.text
+                                hashMapItems["cityName"] = cityName.text
+                                hashMapItems["date"] = date
+                                hashMapItems["billNo"] = billNo.text
+                                hashMapItems["totalPayableAmount"] = totalPayAbleAmount
+                                hashMapItems["id"] = newDocumentRef
+                                hashMapItems["aadat"] = aadat
+                                hashMapItems["hamali"] = hamali
+                                hashMapItems["tolai"] = tolai
+                                hashMapItems["varai"] = varai
+                                hashMapItems["bharai"] = bharai
+                                hashMapItems["travelingExpense"] = travelingExpense
+                                hashMapItems["uchal"] = uchal
+                                hashMapItems["bardhana"] = bardhana
+                                hashMapItems["otherExpense"] = otherExpense
+                                hashMapItems["totalExpense"] = totalExpense
 
                                 db.collection("users").document(framerDocId)
-                                    .set(hashMapOf("id" to newDocumentRef))
+                                    .set(hashMapItems)
                                     .addOnSuccessListener {
-                                        db.collection("users").document(framerDocId)
-                                            .collection("billingDetails").add(hashMapBillDetails)
-                                            .addOnSuccessListener {
-                                                isLoading = false
-                                                for (cardData in cardDataStates) {
-                                                    hashMapItems["quantity"] = cardData.quantity
-                                                    hashMapItems["weight"] = cardData.weight
-                                                    hashMapItems["price"] = cardData.price
-                                                    hashMapItems["totalPrice"] = cardData.totalPrice
-                                                    hashMapItems["typeOfProduct"] =
-                                                        cardData.typeOfProduct
-                                                    hashMapItems["id"] = newDocumentRef
-                                                    db.collection("users").document(framerDocId)
-                                                        .collection("cardDetails").add(hashMapItems)
-                                                        .addOnSuccessListener {
-                                                            isLoading = true
-                                                        }.addOnFailureListener {
-                                                            println(it.message)
-                                                            Toast.makeText(
-                                                                context,
-                                                                "Data Not Added to Firebase",
-                                                                Toast.LENGTH_SHORT
-                                                            ).show()
-                                                            isLoading = false
-                                                        }
+                                        isLoading = false
+                                        for (cardData in cardDataStates) {
+                                            hashMapCardItems["quantity"] = cardData.quantity
+                                            hashMapCardItems["weight"] = cardData.weight
+                                            hashMapCardItems["price"] = cardData.price
+                                            hashMapCardItems["totalPrice"] = cardData.totalPrice
+                                            hashMapCardItems["typeOfProduct"] = cardData.typeOfProduct
+                                            hashMapCardItems["id"] = newDocumentRef
+                                            db.collection("users").document(framerDocId)
+                                                .collection("cardDetails")
+                                                .add(hashMapCardItems)
+                                                .addOnFailureListener { exception ->
+                                                    println(exception.message)
+                                                    Toast.makeText(
+                                                        context,
+                                                        "Failed to add card details: ${exception.message}",
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
                                                 }
-                                                hashMapExpense["aadat"] = aadat
-                                                hashMapExpense["hamali"] = hamali
-                                                hashMapExpense["tolai"] = tolai
-                                                hashMapExpense["varai"] = varai
-                                                hashMapExpense["bharai"] = bharai
-                                                hashMapExpense["travelingExpense"] =
-                                                    travelingExpense
-                                                hashMapExpense["uchal"] = uchal
-                                                hashMapExpense["bardhana"] = bardhana
-                                                hashMapExpense["otherExpense"] = otherExpense
-                                                hashMapExpense["totalExpense"] = totalExp
-                                                hashMapExpense["id"] = newDocumentRef
-                                                db.collection("users").document(framerDocId)
-                                                    .collection("expense").add(hashMapExpense)
-                                                    .addOnSuccessListener {
-                                                        isLoading = false
-                                                        Toast.makeText(
-                                                            context,
-                                                            "Data Added to Firebase",
-                                                            Toast.LENGTH_SHORT
-                                                        ).show()
-                                                        navController.navigate("home") {
-                                                            popUpTo("makeBill") { inclusive = true }
-                                                        }
 
-                                                    }
-                                            }
+                                        }
+
+                                        Toast.makeText(
+                                            context,
+                                            "Data Added to Firebase",
+                                            Toast.LENGTH_SHORT).show()
+                                        navController.navigate("home") {
+                                            popUpTo("makeBill") { inclusive = true }
+                                        }
+
                                     }
-                                    .addOnFailureListener {
+                                    .addOnFailureListener{
                                         println(it.message)
                                         Toast.makeText(
                                             context,

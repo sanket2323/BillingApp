@@ -61,8 +61,6 @@ fun AdminLogin(navController: NavController) {
     Surface(
         modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
     ) {
-
-
         Column(
             verticalArrangement = Arrangement.Center, modifier = Modifier
                 .padding(16.dp)
