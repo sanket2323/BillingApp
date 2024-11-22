@@ -4,16 +4,21 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -28,6 +33,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.billingapp.model.BillingModelClass
+import com.example.billingapp.model.CardData
 import com.google.firebase.firestore.FirebaseFirestore
 
 @Composable
@@ -37,10 +43,8 @@ fun ViewBillDetailScreen(bill: BillingModelClass) {
     Scaffold {
         Surface(
             modifier = Modifier.fillMaxSize(),
-            color = androidx.compose.material3.MaterialTheme.colorScheme.background
+            color = MaterialTheme.colorScheme.background
         ) {
-
-
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -49,7 +53,10 @@ fun ViewBillDetailScreen(bill: BillingModelClass) {
                         bottom = it.calculateBottomPadding(),
                         start = 14.dp,
                         end = 14.dp
-                    ), verticalArrangement = Arrangement.spacedBy(10.dp)
+                    )
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement
+                    .spacedBy(10.dp)
             ) {
                 Text(
                     text = "Bill Detail Screen",
@@ -106,6 +113,106 @@ fun ViewBillDetailScreen(bill: BillingModelClass) {
                 HorizontalDivider(
                     thickness = 0.75.dp, color = Color.Gray
                 )
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    val filteredList = bill.cardData.filter {
+                        it.id == bill.id
+
+                    }
+                    println("FilterList " + filteredList)
+
+                    if (filteredList.isEmpty()) {
+                        filteredList.forEach { card ->
+                            Text("No cards")
+                        }
+                    } else {
+                        filteredList.forEach {
+                            Card(
+                                shape = RoundedCornerShape(10.dp),
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Row(
+                                    Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                ) {
+                                    OutlinedTextField(
+                                        value = it.typeOfProduct,
+                                        onValueChange = {},
+                                        enabled = false,
+                                        placeholder = { Text("मालाचा प्रकार") },
+                                        label = { Text("मालाचा प्रकार") },
+                                        shape = RoundedCornerShape(10.dp),
+                                        modifier = Modifier.weight(0.75f)
+                                    )
+
+                                    OutlinedTextField(
+                                        value = it.quantity,
+                                        onValueChange = { },
+                                        enabled = false,
+                                        placeholder = { Text("नग") },
+                                        label = { Text("नग") },
+                                        shape = RoundedCornerShape(10.dp),
+                                        modifier = Modifier.weight(0.25f),
+                                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                                    )
+
+
+                                }
+
+
+                                Spacer(Modifier.height(6.dp))
+
+                                Row(
+                                    Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                ) {
+
+                                    OutlinedTextField(
+                                        value = it.weight,
+                                        onValueChange = {},
+                                        enabled = false,
+                                        placeholder = { Text("वजन (kg)") },
+                                        label = { Text("वजन (kg)") },
+                                        shape = RoundedCornerShape(10.dp),
+                                        modifier = Modifier.weight(1f),
+                                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                                    )
+                                    OutlinedTextField(
+                                        value = it.price,
+                                        onValueChange = {},
+                                        enabled = false,
+                                        placeholder = { Text("भाव (₹ per kg)") },
+                                        label = { Text("भाव (₹ per kg)") },
+                                        shape = RoundedCornerShape(10.dp),
+                                        modifier = Modifier.weight(1f),
+                                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                                    )
+
+                                    Column(
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        verticalArrangement = Arrangement.Center,
+                                        modifier = Modifier.weight(1f)
+                                    ) {
+                                        Text(text = "एकूण")
+                                        Text(
+                                            text = "${it.totalPrice}₹",
+                                            fontWeight = FontWeight.SemiBold,
+                                            fontSize = 20.sp
+                                        )
+                                    }
+                                }
+                            }
+                            Spacer(modifier = Modifier.height(8.dp))
+                        }
+                    }
+
+                }
+                HorizontalDivider(
+                    thickness = 0.75.dp, color = Color.Gray
+                )
+
+
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -217,12 +324,24 @@ fun ViewBillDetailScreen(bill: BillingModelClass) {
                     )
 
                 }
+
+                Text(
+                    "Total Expense:" + bill.totalExpense +"₹",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(4.dp),
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    textAlign = TextAlign.Center
+                )
                 HorizontalDivider(
                     thickness = 0.75.dp, color = Color.Gray
                 )
 
+
+
                 Text(
-                    "कुल:" + bill.totalPayAbleAmount,
+                    "कुल:" + bill.totalPayAbleAmount + "₹",
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(4.dp),
@@ -236,4 +355,7 @@ fun ViewBillDetailScreen(bill: BillingModelClass) {
         }
     }
 }
+
+
+
 

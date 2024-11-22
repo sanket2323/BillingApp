@@ -17,7 +17,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             BillingAppTheme {
                 Global.apply {
-                    listOfAdminIdAndPassword["sanket"] = "admin@123"
+                    listOfAdminIdAndPassword["sanket"] = "admin"
                 }
               AppNavigation()
             }

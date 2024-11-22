@@ -64,12 +64,16 @@ fun DisplayList(navController: NavController) {
     LaunchedEffect(Unit) {
         delay(2000)
         val db = FirebaseFirestore.getInstance()
+
         try {
             db.collection("users").get().addOnSuccessListener { users ->
 
+
                 for (user in users) {
-                    db.collection("users").document(user.id).collection("cardDetails").get()
+                    db.collection("users").document(user.id).collection("cardDetails")
+                        .whereEqualTo("id", user["id"].toString()).get()
                         .addOnSuccessListener { cards ->
+
                             for (card in cards) {
                                 listOfCard.add(
                                     CardData(
@@ -78,7 +82,7 @@ fun DisplayList(navController: NavController) {
                                         price = card["price"].toString(),
                                         totalPrice = card["totalPrice"].toString(),
                                         typeOfProduct = card["typeOfProduct"].toString(),
-                                        id = card.id,
+                                        id = card["id"].toString(),
                                     )
                                 )
                             }
@@ -107,6 +111,7 @@ fun DisplayList(navController: NavController) {
                             println("List $listOfBill")
                         }
                 }
+
             }.addOnFailureListener {
                 Log.d("TAG", "DisplayList: ${it.message}")
             }
@@ -242,7 +247,11 @@ fun CardView(wholeBill: BillingModelClass) {
                 )
             }
             Icon(
-                Icons.Default.Info, "Info Button", modifier = Modifier.size(30.dp)
+                Icons.Default.Info, "Info Button", modifier = Modifier
+                    .size(30.dp)
+                    .padding(
+                        end = 10.dp
+                    )
             )
 
         }
