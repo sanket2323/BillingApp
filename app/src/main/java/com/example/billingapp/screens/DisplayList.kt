@@ -1,6 +1,7 @@
 package com.example.billingapp.screens
 
 import android.content.Intent
+import android.text.TextUtils
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
@@ -39,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -59,6 +61,7 @@ fun DisplayList(navController: NavController) {
     var listOfCard = ArrayList<CardData>()
     var isLoading by remember { mutableStateOf(true) }
     var listOfBills by remember { mutableStateOf(ArrayList<BillingModelClass>()) }
+    var isSearching by remember { mutableStateOf(false) }
 
 
     LaunchedEffect(Unit) {
@@ -122,6 +125,8 @@ fun DisplayList(navController: NavController) {
 
     }
 
+    val billsList = searchName
+
     Scaffold { paddingValues ->
         Box(
             modifier = Modifier
@@ -139,6 +144,20 @@ fun DisplayList(navController: NavController) {
                         value = searchName,
                         onValueChange = {
                             searchName = it
+
+//                            listOfMandals = if (!TextUtils.isEmpty(textFieldValue.text)) {
+//                                val list = search(it, listOfMandal)
+//                                list
+//                            } else {
+//                                listOfMandal
+//                            }
+
+                            listOfBills = if (!searchName.isEmpty()){
+                                val list = search(it,listOfBills)
+                                list
+                            }else{
+                                listOfBills
+                            }
                         },
                         label = { Text("Search") },
                         modifier = Modifier
@@ -260,4 +279,49 @@ fun CardView(wholeBill: BillingModelClass) {
     }
 
 
+}
+
+
+//fun search(textFieldValue: TextFieldValue, listOfMandals: ArrayList<Mandal>): ArrayList<Mandal> {
+//    var list = ArrayList<Mandal>()
+//    if (!TextUtils.isEmpty(textFieldValue.text)) {
+//        for (mandal in listOfMandals) {
+//            if (mandal.nameOfMandal.toString().contains(textFieldValue.text, true)) {
+//                list.add(mandal)
+//            }
+//        }
+//    } else {
+//        list = listOfMandals
+//    }
+//    return list
+//}
+
+fun search (searchName:String,listOfBills:ArrayList<BillingModelClass>)
+:ArrayList<BillingModelClass>{
+    var list = ArrayList<BillingModelClass>()
+    if(!TextUtils.isEmpty(searchName)){
+        for(bill in listOfBills){
+            if(bill.nameOfFarmer.contains(searchName,true)){
+                list.add(bill)
+            }
+        }
+    }
+    else{
+        list = listOfBills
+    }
+    return list
+}
+
+fun doesMatchSearchQuery(query:String,billingModelClass: BillingModelClass):Boolean{
+    val matchingCombination = listOf(
+        "${billingModelClass.nameOfFarmer}",
+        "${billingModelClass.cityName}",
+        "${billingModelClass.date}",
+        "${billingModelClass.billNo}",
+        "${billingModelClass.nameOfFarmer.first()}"
+    )
+
+    return matchingCombination.any{
+        it.contains(query,ignoreCase = true)
+    }
 }

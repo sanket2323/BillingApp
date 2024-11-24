@@ -41,9 +41,9 @@ fun HomePage(navController: NavController) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp),
-                painter = painterResource(R.drawable.onion_png_38743),
+                painter = painterResource(R.drawable.undraw_join_re_w1lh),
                 contentDescription = null,
-                contentScale = ContentScale.Crop,
+                contentScale = ContentScale.Fit,
             )
 
             Spacer(Modifier.height(80.dp))
