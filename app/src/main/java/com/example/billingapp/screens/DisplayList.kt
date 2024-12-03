@@ -1,10 +1,12 @@
 package com.example.billingapp.screens
 
 import android.content.Intent
+import android.net.Uri
 import android.text.TextUtils
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,6 +20,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -38,6 +41,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
@@ -107,6 +111,7 @@ fun DisplayList(navController: NavController) {
                                     date = user["date"].toString(),
                                     billNo = user["billNo"].toString(),
                                     totalPayAbleAmount = user["totalPayableAmount"].toString(),
+                                    phoneNumber = user["phoneNumber"].toString(),
                                     cardData = listOfCard
                                 )
                             )
@@ -144,18 +149,10 @@ fun DisplayList(navController: NavController) {
                         value = searchName,
                         onValueChange = {
                             searchName = it
-
-//                            listOfMandals = if (!TextUtils.isEmpty(textFieldValue.text)) {
-//                                val list = search(it, listOfMandal)
-//                                list
-//                            } else {
-//                                listOfMandal
-//                            }
-
-                            listOfBills = if (!searchName.isEmpty()){
-                                val list = search(it,listOfBills)
+                            listOfBills = if (!searchName.isEmpty()) {
+                                val list = search(it, listOfBills)
                                 list
-                            }else{
+                            } else {
                                 listOfBills
                             }
                         },
@@ -226,13 +223,10 @@ fun CardView(wholeBill: BillingModelClass) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
-            .clickable {
-                Global.selectedMandal = wholeBill
-                val intent = Intent(context, ViewBillDetails::class.java)
-                context.startActivity(intent)
-            },
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+            .background(color = Color.Transparent)
+            .padding(top = 4.dp),
+//            .padding(8.dp),
+//        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
         shape = RoundedCornerShape(10.dp),
 //
@@ -265,13 +259,40 @@ fun CardView(wholeBill: BillingModelClass) {
                     fontWeight = FontWeight.W400
                 )
             }
-            Icon(
-                Icons.Default.Info, "Info Button", modifier = Modifier
-                    .size(30.dp)
+            Row {
+                Icon(Icons.Default.Info, "Info Button", modifier = Modifier
+                    .size(40.dp)
                     .padding(
                         end = 10.dp
                     )
-            )
+                    .clickable {
+                        Global.selectedMandal = wholeBill
+                        val intent = Intent(context, ViewBillDetails::class.java)
+                        context.startActivity(intent)
+                    })
+
+                Icon(
+                    Icons.Default.Call, "PhoneCall", modifier = Modifier
+                        .size(40.dp)
+                        .padding(
+                            end = 10.dp
+                        )
+                        .clickable {
+                            try {
+                                val intent = Intent(Intent.ACTION_DIAL).apply {
+                                    data = Uri.parse("tel: ${wholeBill.phoneNumber}")
+                                }
+                                context.startActivity(intent)
+                            }
+                            catch(e:Exception){
+                                Log.d("TAG", "CardView: ${e.message}")
+                            }
+
+                        }
+
+                )
+            }
+
 
         }
 
@@ -296,23 +317,23 @@ fun CardView(wholeBill: BillingModelClass) {
 //    return list
 //}
 
-fun search (searchName:String,listOfBills:ArrayList<BillingModelClass>)
-:ArrayList<BillingModelClass>{
+fun search(
+    searchName: String, listOfBills: ArrayList<BillingModelClass>
+): ArrayList<BillingModelClass> {
     var list = ArrayList<BillingModelClass>()
-    if(!TextUtils.isEmpty(searchName)){
-        for(bill in listOfBills){
-            if(bill.nameOfFarmer.contains(searchName,true)){
+    if (!TextUtils.isEmpty(searchName)) {
+        for (bill in listOfBills) {
+            if (bill.nameOfFarmer.contains(searchName, true)) {
                 list.add(bill)
             }
         }
-    }
-    else{
+    } else {
         list = listOfBills
     }
     return list
 }
 
-fun doesMatchSearchQuery(query:String,billingModelClass: BillingModelClass):Boolean{
+fun doesMatchSearchQuery(query: String, billingModelClass: BillingModelClass): Boolean {
     val matchingCombination = listOf(
         "${billingModelClass.nameOfFarmer}",
         "${billingModelClass.cityName}",
@@ -321,7 +342,7 @@ fun doesMatchSearchQuery(query:String,billingModelClass: BillingModelClass):Bool
         "${billingModelClass.nameOfFarmer.first()}"
     )
 
-    return matchingCombination.any{
-        it.contains(query,ignoreCase = true)
+    return matchingCombination.any {
+        it.contains(query, ignoreCase = true)
     }
 }

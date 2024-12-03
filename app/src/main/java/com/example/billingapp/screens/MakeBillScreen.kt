@@ -112,6 +112,7 @@ fun MakeBillScreen(navController: NavController) {
 
 
     //expense wala part
+    var phoneNumber by remember { mutableStateOf("") }
     var aadat by remember { mutableStateOf("") }
     var hamali by remember { mutableStateOf("") }
     var tolai by remember { mutableStateOf("") }
@@ -169,6 +170,17 @@ fun MakeBillScreen(navController: NavController) {
                             modifier = Modifier.fillMaxWidth(),
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
                         )
+
+                        OutlinedTextField(value = phoneNumber,
+                            onValueChange = { phoneNumber = it },
+                            placeholder = { Text("फोन नंबर") },
+                            label = { Text("फोन नंबर") },
+                            shape = RoundedCornerShape(10.dp),
+                            modifier = Modifier.fillMaxWidth(),
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                        )
+
+
 
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -571,6 +583,7 @@ fun MakeBillScreen(navController: NavController) {
                                 hashMapItems["bardhana"] = bardhana
                                 hashMapItems["otherExpense"] = otherExpense
                                 hashMapItems["totalExpense"] = totalExpense
+                                hashMapItems["phoneNumber"] = phoneNumber
 
                                 db.collection("users").document(framerDocId)
                                     .set(hashMapItems)

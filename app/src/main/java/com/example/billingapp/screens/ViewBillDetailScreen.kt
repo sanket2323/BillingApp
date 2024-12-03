@@ -99,6 +99,7 @@ fun ViewBillDetailScreen(bill: BillingModelClass) {
                         enabled = false,
                     )
 
+                    println(bill.phoneNumber)
                     OutlinedTextField(
                         value = bill.date,
                         onValueChange = { },

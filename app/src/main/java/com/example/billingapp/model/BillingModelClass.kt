@@ -17,6 +17,7 @@ data class BillingModelClass(
     val date: String,
     val billNo: String,
     var totalPayAbleAmount: String,
+    var phoneNumber: String,
     var cardData: List<CardData> = listOf(),
 )
 
