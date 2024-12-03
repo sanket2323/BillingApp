@@ -44,9 +44,11 @@ dependencies {
 
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.auth)
+    implementation(libs.androidx.constraintlayout)
     val nav_version = "2.8.3"
 
     implementation("androidx.navigation:navigation-compose:$nav_version")
+    implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

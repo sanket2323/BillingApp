@@ -8,13 +8,17 @@ import com.example.billingapp.screens.AdminLogin
 import com.example.billingapp.screens.DisplayList
 import com.example.billingapp.screens.HomePage
 import com.example.billingapp.screens.MakeBillScreen
+import com.example.billingapp.screens.SplashScreen
 
 
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = "home") {
+    NavHost(navController = navController, startDestination = "splash") {
+        composable("splash") {
+            SplashScreen(navController)
+        }
         composable("home") {
             HomePage(navController)
         }
